@@ -3,6 +3,7 @@ package com.sytm.sunweather.ui.weather
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -42,7 +43,7 @@ class WeatherActivity : AppCompatActivity() {
             viewModel.placeName = intent.getStringExtra("place_name") ?: ""
         }
 
-        viewModel.weatherLiveData.observe(this){ result ->
+        viewModel.weatherLiveData.observe(this, androidx.lifecycle.Observer { result ->
             val weather = result.getOrNull()
             if(weather != null){
                 showWeatherInfo(weather)
@@ -51,9 +52,20 @@ class WeatherActivity : AppCompatActivity() {
                 Toast.makeText(this, "无法成功获取天气信息", Toast.LENGTH_SHORT).show()
                 result.exceptionOrNull()?.printStackTrace()
             }
-        }
+            swipeRefresh.isRefreshing = false
+        })
 
+        swipeRefresh.setColorSchemeResources(R.color.design_default_color_primary)
+        refreshWeather()
+
+        swipeRefresh.setOnRefreshListener {
+            refreshWeather()
+        }
+    }
+
+    fun refreshWeather(){
         viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
+        swipeRefresh.isRefreshing = true
     }
 
     private fun showWeatherInfo(weather: Weather) {

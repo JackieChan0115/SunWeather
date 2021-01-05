@@ -1,5 +1,6 @@
 package com.sytm.sunweather.ui.weather
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
